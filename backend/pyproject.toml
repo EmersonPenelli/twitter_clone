@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "twitter-clone"
+version = "0.1.0"
+description = ""
+authors = ["Analice <analice.leite12@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+Django = "^5.1.2"
+django-cors-headers = "^4.6.0"
+pillow = "^11.0.0"
+django-extensions = "^3.2.3"
+
+[tool.poetry.group.dev.dependencies]
+Django = "^5.1.2"
+django-debug-toolbar = "^4.4.6"
+djangorestframework = "^3.15.2"
+pytest = "^8.3.3"
+psycopg2-binary = "^2.9.10"
+django-extensions = "^3.2.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

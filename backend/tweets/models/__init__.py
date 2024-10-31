@@ -1,0 +1,1 @@
+from tweets.models.tweet_model import Tweet
