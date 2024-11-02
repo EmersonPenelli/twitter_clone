@@ -57,12 +57,18 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+     'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ALGORITHM' : 'HS256',
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ROTATE_REFRESH_TOKENS': True,
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 DJOSER = {
@@ -139,6 +145,23 @@ DATABASES = {
 SITE_ID = 1
 
 AUTH_USER_MODEL = 'login.CustomUser'
+
+# Email configurations
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('HOST_EMAIL')
+EMAIL_PORT = os.getenv('PORT_EMAIL')
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_USER')
+
+
+# Variables for writing a password reser e-mail
+FRONTEND_METHOD = 'http'
+FRONTEND_DOMAIN = 'localhost'
+FRONTEND_PORT = '3000'
+FRONTEND_URI = 'reset-password'
+SITE_NAME = 'Twiiter Clone'
 
 
 # Password validation

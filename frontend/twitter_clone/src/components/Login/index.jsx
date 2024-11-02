@@ -3,13 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
-import { login, register } from '../../api/login_api';
+import { login, register, resetPassword } from '../../api/login_api';
 
 const Login = ({ onLogin }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isLoginMode, setIsLoginMode] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const [isLoginMode, setIsLoginMode] = useState(true);
+    const [isResetPasswordMode, setIsResetPasswordMode] = useState(false);
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
@@ -21,12 +25,12 @@ const Login = ({ onLogin }) => {
         setIsLoading(true);
         setError('');
         setSuccessMessage('');
-    
+
         try {
             if (isLoginMode) {
                 const result = await login(email, password);
                 console.log("Login result:", result);
-    
+
                 if (result.success) {
                     localStorage.setItem('user_token', result.data.access);
                     localStorage.setItem('user_refresh_token', result.data.refresh);
@@ -35,27 +39,45 @@ const Login = ({ onLogin }) => {
                     onLogin();
                     navigate('/home');
                 } else {
-                    setError(result.message || "Erro ao fazer login.");
+                    setError(result.message || "Error logging in.");
+                }
+            } else if (isResetPasswordMode) {
+                const result = await resetPassword(email);
+                console.log("Reset password result:", result);
+
+                if (result.success) {
+                    setSuccessMessage("Password redefined successfully.");
+                    setEmail('');
+                } else {
+                    setError(result.message || "Error redefining the password.");
                 }
             } else {
                 const result = await register(name, email, password);
-                console.log("Registro result:", result);
-    
+                console.log("Register result:", result);
+
                 if (result.success) {
                     setSuccessMessage(result.message);
-                    setEmail('')
-                    setPassword('')
+                    setEmail('');
+                    setPassword('');
+                    setName('');
                     setIsLoginMode(true);
                 } else {
-                    setError(result.message || "Erro ao tentar registrar.");
+                    setError(result.message || "Error during the registration.");
                 }
             }
         } catch (error) {
-            setError("Erro inesperado. Tente novamente.");
+            setError("Unespected error. Try again.");
             console.log("Erro:", error.message);
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleResetPassword = () => {
+        setIsResetPasswordMode(true);
+        setIsLoginMode(false);
+        setPassword('');
+        setConfirmPassword('');
     };
 
     return (
@@ -65,53 +87,109 @@ const Login = ({ onLogin }) => {
                     <div className='absolute top-10'>
                         <FontAwesomeIcon icon={faTwitter} className="text-6xl text-twitter-blue" />
                     </div>
-                    {!isLoginMode && (
+
+                    {isResetPasswordMode ? (
                         <div className="mb-4">
                             <input
-                                type="text"
-                                placeholder="Name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
+                                type="email"
+                                placeholder="Email address"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="w-full bg-gray-700 text-white rounded py-2 px-4"
                                 required
                             />
                         </div>
+                    ) : (
+                        <>
+                            {!isLoginMode && (
+                                <div className="mb-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Name"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        className="w-full bg-gray-700 text-white rounded py-2 px-4"
+                                        required
+                                    />
+                                </div>
+                            )}
+                            <div className="mb-4">
+                                <input
+                                    type="email"
+                                    placeholder="Email address"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full bg-gray-700 text-white rounded py-2 px-4"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full bg-gray-700 text-white rounded py-2 px-4"
+                                    required
+                                />
+                            </div>
+                        </>
                     )}
-                    <div className="mb-4">
-                        <input
-                            type="email"
-                            placeholder="Email address"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-gray-700 text-white rounded py-2 px-4"
-                            required
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-gray-700 text-white rounded py-2 px-4"
-                            required
-                        />
-                    </div>
+
+                    {isResetPasswordMode && (
+                        <>
+                            <div className="mb-4">
+                                <input
+                                    type="password"
+                                    placeholder="New Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full bg-gray-700 text-white rounded py-2 px-4"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <input
+                                    type="password"
+                                    placeholder="Confirm New Password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className="w-full bg-gray-700 text-white rounded py-2 px-4"
+                                    required
+                                />
+                            </div>
+                        </>
+                    )}
+
                     {!isLoginMode ? (
                         <p className='mb-8 text-sm'>By signing up, you agree with our <span className='text-twitter-blue font-bold cursor-pointer hover:underline'>Terms of Use</span></p>
-                    ) : <p className='mb-8 text-sm'>Forgot your password? <span className='text-twitter-blue font-bold cursor-pointer hover:underline'>Click here</span></p>}
+                    ) : (
+                        <p className='mb-8 text-sm'>
+                            {isResetPasswordMode ? "Remembered your password? " : "Forgot your password? "}
+                            <span className='text-twitter-blue font-bold cursor-pointer hover:underline' onClick={handleResetPassword}>
+                                {isResetPasswordMode ? "Back to Login" : "Click here"}
+                            </span>
+                        </p>
+                    )}
                     <button
                         type="submit"
                         className="w-full bg-twitter-blue text-white font-bold py-2 rounded hover:bg-blue-600 transition duration-200"
                     >
-                        {isLoginMode ? 'Login' : 'Sign Up'}
+                        {isResetPasswordMode ? 'Send' : (isLoginMode ? 'Login' : 'Sign Up')}
                     </button>
                     <div className='absolute bottom-12'>
                         <p className='mt-6'>
                             {isLoginMode ? 'Not a member? ' : 'Already a member? '}
                             <span
                                 className='text-twitter-blue font-bold cursor-pointer hover:underline'
-                                onClick={() => setIsLoginMode(!isLoginMode)}
+                                onClick={() => {
+                                    setIsLoginMode(!isLoginMode);
+                                    setIsResetPasswordMode(false);
+                                    setEmail('');
+                                    setPassword('');
+                                    setName('');
+                                    setConfirmPassword('');
+                                }}
                             >
                                 {isLoginMode ? 'Sign Up' : 'Login'}
                             </span>

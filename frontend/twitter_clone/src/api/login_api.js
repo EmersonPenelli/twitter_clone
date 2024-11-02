@@ -7,11 +7,11 @@ export const login = async (email, password) => {
         if (response.status === 200 && response.data.access && response.data.refresh) {
             return { success: true, data: response.data };
         } else {
-            return { success: false, message: "Tokens não recebidos na resposta do login." };
+            return { success: false, message: "Tokens were not received." };
         }
     } catch (error) {
-        console.error("Erro ao fazer login:", error.response ? error.response.data : error.message);
-        return { success: false, message: error.response?.data?.message || "Erro ao fazer login." };
+        console.error("Error login in:", error.response ? error.response.data : error.message);
+        return { success: false, message: error.response?.data?.message || "Error login in." };
     }
 };
 
@@ -19,24 +19,34 @@ export const register = async (name, email, password) => {
     try {
         const response = await axios.post(`${API_BASE_URL}/api/auth/register/`, { name, email, password });
         if (response.status === 201) {
-            return { success: true, message: "Cadastro realizado com sucesso! Faça o login." };
+            return { success: true, message: "Registered successfully! Login." };
         } else {
-            return { success: false, message: "Erro desconhecido ao tentar registrar o usuário." };
+            return { success: false, message: "Unknown error registering the user." };
         }
     } catch (error) {
-        console.error("Erro ao registrar usuário:", error.response ? error.response.data : error.message);
-        return { success: false, message: error.response?.data?.message || "Erro ao registrar usuário." };
+        console.error("Error registering the user:", error.response ? error.response.data : error.message);
+        return { success: false, message: error.response?.data?.message || "Error registering the user." };
+    }
+};
+
+export const resetPassword = async (email) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/api/auth/password-reset/`, { email });
+        return { success: true, message: "Password redefined successfully." };
+    } catch (error) {
+        console.error("Error redefining the password:", error);
+        return { success: false, message: error.response?.data?.detail || "Error redefining the password:" };
     }
 };
 
 export const logout = async () => {
     const refreshToken = localStorage.getItem('user_refresh_token'); 
 
-    console.log("Token de logout:", refreshToken);
+    console.log("Logout token:", refreshToken);
 
     if (!refreshToken) {
-        console.error("Token de refresh não encontrado. Usuário não está logado.");
-        return { success: false, message: "Token de refresh não encontrado. Usuário não está logado." };
+        console.error("Refresh token was not found. The user is not loged in.");
+        return { success: false, message: "Refresh token was not found. The user is not loged in." };
     }
 
     try {
@@ -52,10 +62,10 @@ export const logout = async () => {
         localStorage.removeItem('user_token');
         localStorage.removeItem('user_refresh_token');
 
-        return { success: true, message: "Logout realizado com sucesso." };
+        return { success: true, message: "Loged out successfully." };
     } catch (error) {
-        console.error("Erro durante o logout:", error.response ? error.response.data : error.message);
-        return { success: false, message: error.response?.data?.message || "Erro durante o logout." };
+        console.error("Error loging out:", error.response ? error.response.data : error.message);
+        return { success: false, message: error.response?.data?.message || "Error loging out." };
     }
 };
 
@@ -67,7 +77,7 @@ export const checkEmailExists = async (user_email) => {
 
         return { success: response.status === 200, exists: response.status === 200 }; 
     } catch (error) {
-        console.error("Erro ao verificar e-mail:", error);
-        return { success: false, message: error.response?.data?.message || "Erro ao verificar e-mail." };
+        console.error("Error verifying the email:", error);
+        return { success: false, message: error.response?.data?.message || "Error verifying the email." };
     }
 };
