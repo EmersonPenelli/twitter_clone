@@ -1,54 +1,62 @@
-// components/LoginPage.tsx
 import React, { useState } from 'react';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
-import { login } from '../../api/login_api';
+import { login, register } from '../../api/login_api';
 
 const Login = ({ onLogin }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const [isLoginMode, setIsLoginMode] = useState(false); // Estado para controlar o modo
+    const [isLoginMode, setIsLoginMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [itemActive, setItemActive] = useState(0);
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-
+        setError('');
+        setSuccessMessage('');
+    
         try {
-            const data = await login(email, password);
-
-            // Aqui você deve lidar com a informação de que o usuário existe
-            if (data.access && data.refresh) {
-                localStorage.setItem('user_token', data.access);
-                localStorage.setItem('user_refresh_token', data.refresh);
-                console.log("Tokens armazenados:", {
-                    access: localStorage.getItem('user_token'),
-                    refresh: localStorage.getItem('user_refresh_token')
-                });
-
-                setEmail('');
-                setPassword('');
-                onLogin();
-                navigate('/home');
+            if (isLoginMode) {
+                const result = await login(email, password);
+                console.log("Login result:", result);
+    
+                if (result.success) {
+                    localStorage.setItem('user_token', result.data.access);
+                    localStorage.setItem('user_refresh_token', result.data.refresh);
+                    setEmail('');
+                    setPassword('');
+                    onLogin();
+                    navigate('/home');
+                } else {
+                    setError(result.message || "Erro ao fazer login.");
+                }
             } else {
-                console.error("Tokens não recebidos na resposta do login.");
+                const result = await register(name, email, password);
+                console.log("Registro result:", result);
+    
+                if (result.success) {
+                    setSuccessMessage(result.message);
+                    setEmail('')
+                    setPassword('')
+                    setIsLoginMode(true);
+                } else {
+                    setError(result.message || "Erro ao tentar registrar.");
+                }
             }
         } catch (error) {
-            console.log("Erro ao logar", error.response?.data || error.message);
+            setError("Erro inesperado. Tente novamente.");
+            console.log("Erro:", error.message);
         } finally {
             setIsLoading(false);
         }
     };
-
 
     return (
         <div className="flex h-screen bg-gray-900">
@@ -60,7 +68,7 @@ const Login = ({ onLogin }) => {
                     {!isLoginMode && (
                         <div className="mb-4">
                             <input
-                                type="name"
+                                type="text"
                                 placeholder="Name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -109,6 +117,8 @@ const Login = ({ onLogin }) => {
                             </span>
                         </p>
                     </div>
+                    {error && <p className="text-red-500 mt-4">{error}</p>}
+                    {successMessage && <p className="text-green-500 mt-4">{successMessage}</p>}
                 </form>
             </div>
             <div className="w-5/12 hidden md:flex flex-col items-center justify-center bg-gray-800 text-white p-6">

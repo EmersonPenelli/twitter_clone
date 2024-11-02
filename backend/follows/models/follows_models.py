@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import CustomUser
+from login.models import CustomUser
 
 class Follow(models.Model):
     follower = models.ForeignKey(CustomUser, related_name="following_set", on_delete=models.CASCADE)
