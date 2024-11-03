@@ -146,23 +146,6 @@ SITE_ID = 1
 
 AUTH_USER_MODEL = 'login.CustomUser'
 
-# Email configurations
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('HOST_EMAIL')
-EMAIL_PORT = os.getenv('PORT_EMAIL')
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
-DEFAULT_FROM_EMAIL = os.getenv('EMAIL_USER')
-
-
-# Variables for writing a password reser e-mail
-FRONTEND_METHOD = 'http'
-FRONTEND_DOMAIN = 'localhost'
-FRONTEND_PORT = '3000'
-FRONTEND_URI = 'reset-password'
-SITE_NAME = 'Twiiter Clone'
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

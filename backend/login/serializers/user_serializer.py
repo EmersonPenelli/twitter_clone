@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'name', 'email', 'password']
+        fields = ['id', 'name', 'email', 'password', 'created_at']
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate_password(self, value):
@@ -28,3 +28,4 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(validated_data['password'])
             validated_data['password'] = make_password(validated_data['password'])
         return super().update(instance, validated_data)
+

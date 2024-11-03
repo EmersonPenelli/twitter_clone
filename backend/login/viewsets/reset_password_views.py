@@ -17,8 +17,8 @@ class PasswordResetView(APIView):
 
             try:
                 user = CustomUser.objects.get(email=email)
-                user.set_password(new_password)  # Define a nova senha
-                user.save()  # Salva o usuário com a nova senha
+                user.set_password(new_password)  
+                user.save()  
 
                 return Response({"success": True, "message": "Senha redefinida com sucesso."}, status=status.HTTP_200_OK)
             except CustomUser.DoesNotExist:

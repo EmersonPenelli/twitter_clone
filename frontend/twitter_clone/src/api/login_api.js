@@ -3,7 +3,7 @@ import { API_BASE_URL } from "./base_api";
 
 export const login = async (email, password) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/auth/login/`, { email, password });
+        const response = await axios.post(`${API_BASE_URL}/api/token/`, { email, password });
         if (response.status === 200 && response.data.access && response.data.refresh) {
             return { success: true, data: response.data };
         } else {
@@ -11,7 +11,7 @@ export const login = async (email, password) => {
         }
     } catch (error) {
         console.error("Error login in:", error.response ? error.response.data : error.message);
-        return { success: false, message: error.response?.data?.message || "Error login in." };
+        return { success: false, message: error.response?.data?.message || "Credentials not found." };
     }
 };
 
@@ -29,13 +29,13 @@ export const register = async (name, email, password) => {
     }
 };
 
-export const resetPassword = async (email) => {
+export const resetPassword = async (email, newPassword, confirmPassword) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/auth/password-reset/`, { email });
+        const response = await axios.post(`${API_BASE_URL}/api/auth/password-reset/`, { email, new_password: newPassword, confirm_password: confirmPassword });
         return { success: true, message: "Password redefined successfully." };
     } catch (error) {
         console.error("Error redefining the password:", error);
-        return { success: false, message: error.response?.data?.detail || "Error redefining the password:" };
+        return { success: false, message: error.response?.data?.detail || "Error redefining the password, try again." };
     }
 };
 

@@ -10,7 +10,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('The Password field must be set') 
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password) # hasing da senha
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -29,6 +29,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
     
     bio = models.TextField(max_length=160, blank=True)
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
@@ -45,6 +46,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         related_name='customuser_groups',
         blank=True,
     )
+
     user_permissions = models.ManyToManyField(
         'auth.Permission',
         related_name='customuser_permissions',

@@ -9,6 +9,7 @@ const Login = ({ onLogin }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const [isLoginMode, setIsLoginMode] = useState(true);
@@ -19,6 +20,35 @@ const Login = ({ onLogin }) => {
     const [successMessage, setSuccessMessage] = useState('');
 
     const navigate = useNavigate();
+
+    const MESSAGE_DISPLAY_DURATION = 4000;
+
+    const setTemporaryMessageClear = (setMessageFunction) => {
+        setTimeout(() => {
+            setMessageFunction('');
+        }, MESSAGE_DISPLAY_DURATION);
+    };
+
+    const validatePasswordStrength = (password) => {
+        const lengthValid = password.length >= 8;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumbers = /\d/.test(password);
+        const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        const isValid = lengthValid && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChars;
+
+        return {
+            isValid,
+            errors: {
+                length: lengthValid ? null : "Min. 8 chars,",
+                upperCase: hasUpperCase ? null : "1 uppercase,",
+                lowerCase: hasLowerCase ? null : "1 lowercase,",
+                numbers: hasNumbers ? null : "1 number,",
+                specialChars: hasSpecialChars ? null : "1 special char.",
+            },
+        };
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -39,17 +69,38 @@ const Login = ({ onLogin }) => {
                     onLogin();
                     navigate('/home');
                 } else {
-                    setError(result.message || "Error logging in.");
+                    setError(result.message);
+                    setTemporaryMessageClear(setError);
                 }
             } else if (isResetPasswordMode) {
-                const result = await resetPassword(email);
+                if (newPassword != confirmPassword) {
+                    setError("Passwords do not match.");
+                    setIsLoading(false);
+                    setTemporaryMessageClear(setError);
+                    return;
+                }
+
+                const { isValid, errors } = validatePasswordStrength(newPassword);
+                if (!isValid) {
+                    const errorMessages = Object.values(errors).filter(Boolean);
+                    setError(errorMessages.join(" ")); 
+                    setIsLoading(false);
+                    setTemporaryMessageClear(setError);
+                    return;
+                }
+
+                const result = await resetPassword(email, newPassword, confirmPassword);
                 console.log("Reset password result:", result);
 
                 if (result.success) {
                     setSuccessMessage("Password redefined successfully.");
                     setEmail('');
+                    setNewPassword('');
+                    setConfirmPassword('');
+                    setTemporaryMessageClear(setSuccessMessage);
                 } else {
-                    setError(result.message || "Error redefining the password.");
+                    setError(result.message);
+                    setTemporaryMessageClear(setError);
                 }
             } else {
                 const result = await register(name, email, password);
@@ -61,13 +112,16 @@ const Login = ({ onLogin }) => {
                     setPassword('');
                     setName('');
                     setIsLoginMode(true);
+                    setTemporaryMessageClear(setSuccessMessage);
                 } else {
-                    setError(result.message || "Error during the registration.");
+                    setError(result.message);
+                    setTemporaryMessageClear(setError);
                 }
             }
         } catch (error) {
             setError("Unespected error. Try again.");
-            console.log("Erro:", error.message);
+            console.log("Error:", error.message);
+            setTemporaryMessageClear(setError);
         } finally {
             setIsLoading(false);
         }
@@ -142,8 +196,8 @@ const Login = ({ onLogin }) => {
                                 <input
                                     type="password"
                                     placeholder="New Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
                                     className="w-full bg-gray-700 text-white rounded py-2 px-4"
                                     required
                                 />
