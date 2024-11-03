@@ -11,6 +11,11 @@ Django = "^5.1.2"
 django-cors-headers = "^4.6.0"
 pillow = "^11.0.0"
 django-extensions = "^3.2.3"
+djangorestframework-simplejwt = "^5.3.1"
+djoser = "^2.2.3"
+python-decouple = "^3.8"
+secure-smtplib = "^0.1.1"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 Django = "^5.1.2"

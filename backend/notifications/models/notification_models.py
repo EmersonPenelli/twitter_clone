@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import CustomUser
+from login.models import CustomUser
 from tweets.models import Tweet
 
 class Notification(models.Model):
