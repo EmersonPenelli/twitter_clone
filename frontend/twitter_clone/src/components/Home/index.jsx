@@ -6,6 +6,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import Sidebar from '../Sidebar';
 import TwitterForm from '../TwitterForm';
 import Tweet from '../Tweet';
+import { fetchUsers, toggleFollowUser } from '../../api/follow';
 
 import { v4 } from "uuid"
 import { getAvatar, getRandomImage } from '../../utils/generateImages';
@@ -15,13 +16,42 @@ import FollowItem from '../FollowItem';
 
 const Home = () => {
     const [tweets, setTweets] = useState([]);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         const interval = setInterval(() => {
-                addNewRandomTweets()
+            addNewRandomTweets()
         }, 5000);
         return () => clearInterval(interval)
-    }, []) 
+    }, [])
+
+    useEffect(() => {
+        const loadUsers = async () => {
+            const response = await fetchUsers();
+            if (response.success) {
+                setUsers(response.data.map(user => ({
+                    ...user,
+                    isFollowing: user.is_following  
+                })));
+            } else {
+                console.error(response.message);
+            }
+        };
+    
+        loadUsers();
+    }, []);
+
+    const handleToggleFollow = async (userId) => {
+        const response = await toggleFollowUser(userId);
+
+        if (response.success) {
+            setUsers(users.map(user =>
+                user.id === userId ? { ...user, isFollowing: response.following } : user
+            ));
+        } else {
+            console.error(response.message);
+        }
+    };
 
     const addNewRandomTweets = () => {
         const randomTweets = [
@@ -100,10 +130,16 @@ const Home = () => {
                     </div>
                     <div className='bg-gray-800 rounded-xl mt-4 p-4'>
                         <h2 className='font-bold text-xl mb-4'>Who to follow</h2>
-                        <FollowItem name="Bill Gates" username="Billgates" />
-                        <FollowItem name="Will Smith" username="WillSmith" />
-                        <FollowItem name="Analice Leite" username="AnaliceLeite" />
-                        <FollowItem name="Luis Gustavo" username="LuisGustavo" />
+                        {users.map(user => (
+                            <FollowItem
+                                key={user.id}
+                                name={user.name}
+                                username={user.name}
+                                userId={user.id}
+                                isFollowing={user.isFollowing || false} 
+                                onToggleFollow={() => handleToggleFollow(user.id)}
+                            />
+                        ))}
                     </div>
                 </div>
             </aside>
