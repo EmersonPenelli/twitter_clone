@@ -12,7 +12,7 @@ import { fetchTweets } from '../../api/tweet_api';
 const Home = () => {
     const [tweets, setTweets] = useState([]);
 
-    // User information
+    // Random user information
     const userName = "User";
 
     useEffect(() => {
@@ -89,7 +89,7 @@ const Home = () => {
                     <h2 className='px-4 py-3 text-xl font-bold'>For you</h2>
                 </header>
                 <TwitterForm
-                    onTweet={(newTweet) => setTweets((prevTweets) => [newTweet, ...prevTweets])} // Update the state with the new tweet
+                    onTweet={(newTweet) => setTweets((prevTweets) => [newTweet, ...prevTweets])} 
                     userName={userName}
                     userUsername={`user${Math.floor(Math.random() * 1000)}`}
                     userAvatar= {getAvatar(`user${Math.floor(Math.random() * 1000)}@email.com`)}

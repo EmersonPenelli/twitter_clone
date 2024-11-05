@@ -7,8 +7,9 @@ import { fetchUsers, toggleFollowUser } from '../../api/follow';
 
 import TrendItem from '../TrendItem';
 import FollowItem from '../FollowItem';
+import { updateUserPremiumStatus } from '../../api/login_api';
 
-const Aside = () => {
+const Aside = ({currentUser}) => {
     const [isSubscribed, setSubscribed] = useState(false);
     const [users, setUsers] = useState([]);
 
@@ -24,7 +25,15 @@ const Aside = () => {
                 console.error(response.message);
             }
         };
+
+        const checkPremiumStatus = async () => {
+            if (currentUser) {
+                setSubscribed(currentUser.is_premium);
+            }
+        }
+
         loadUsers();
+        checkPremiumStatus();
     }, []);
 
     const handleToggleFollow = async (userId) => {
@@ -38,8 +47,18 @@ const Aside = () => {
         }
     };
 
-    const handleSubscribe = () => {
-        setSubscribed(prev => !prev);
+    const handleSubscribe = async () => {
+        if (!currentUser) {
+            alert("Você precisa estar logado para se inscrever no Premium.");
+            return; 
+        }
+        
+        const response = await updateUserPremiumStatus(currentUser.id); 
+        if (response.success) {
+            setSubscribed(prev => !prev);
+        } else {
+            console.error(response.message);
+        }
     };
 
     return (

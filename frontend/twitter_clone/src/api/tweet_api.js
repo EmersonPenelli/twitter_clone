@@ -25,7 +25,7 @@ export const tweet = async (userId, content) => {
 
 export const fetchTweets = async () => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/api/tweets/`, {
+        const response = await axios.get(`${API_BASE_URL}/api/v1/tweets/`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('user_token')}`
             }
@@ -44,7 +44,7 @@ export const fetchTweets = async () => {
 export const updateState = async (tweetId, updateData) => {
     console.log("Sending update:", { tweetId, updateData });
     try {
-        const response = await axios.patch(`${API_BASE_URL}/api/tweets/${tweetId}/`, updateData, {
+        const response = await axios.patch(`${API_BASE_URL}/api/v1/tweets/${tweetId}/`, updateData, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('user_token')}`
             }

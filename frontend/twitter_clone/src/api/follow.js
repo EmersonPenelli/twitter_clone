@@ -3,7 +3,7 @@ import { API_BASE_URL } from './base_api';
 
 export const fetchUsers = async () => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/api/users/`, {
+        const response = await axios.get(`${API_BASE_URL}/api/v1/users/`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('user_token')}`
             }
@@ -21,7 +21,7 @@ export const fetchUsers = async () => {
 
 export const toggleFollowUser = async (userId) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/follows/`, { user_id: userId }, {
+        const response = await axios.post(`${API_BASE_URL}/api/v1/follows/`, { user_id: userId }, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('user_token')}`
             }
