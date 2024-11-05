@@ -40,3 +40,18 @@ export const fetchTweets = async () => {
         return { success: false, message: error.response?.data || "An error occurred." };
     }
 };
+
+export const updateState = async (tweetId, updateData) => {
+    console.log("Sending update:", { tweetId, updateData });
+    try {
+        const response = await axios.patch(`${API_BASE_URL}/api/tweets/${tweetId}/`, updateData, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('user_token')}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error; 
+    }
+};

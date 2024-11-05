@@ -5,7 +5,6 @@ from rest_framework import status
 
 from login.serializers.logout_serializer import LogoutSerializer
 
-
 class LogoutView(APIView):
 
     def post(self, request):
