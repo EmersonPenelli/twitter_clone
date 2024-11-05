@@ -10,4 +10,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise AuthenticationFailed('No active account found with the given credentials')
 
         data = super().validate(attrs)
+
+        data['user_id'] = user.id
         return data

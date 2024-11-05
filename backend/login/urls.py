@@ -6,9 +6,8 @@ from .viewsets.logout_views import LogoutView
 from .viewsets.user_views import UserViewSet
 from .viewsets.reset_password_views import PasswordResetView
 
-# Crie um router e registre o UserViewSet
 router = DefaultRouter()
-router.register(r'register', UserViewSet, basename='user')  
+router.register(r'users', UserViewSet, basename='user')  
 
 urlpatterns = [
     path('', include('djoser.urls')),

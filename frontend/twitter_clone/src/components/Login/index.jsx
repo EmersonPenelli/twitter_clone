@@ -59,11 +59,11 @@ const Login = ({ onLogin }) => {
         try {
             if (isLoginMode) {
                 const result = await login(email, password);
-                console.log("Login result:", result);
 
                 if (result.success) {
                     localStorage.setItem('user_token', result.data.access);
                     localStorage.setItem('user_refresh_token', result.data.refresh);
+                    localStorage.setItem('user_id', result.data.user_id);
                     setEmail('');
                     setPassword('');
                     onLogin();
@@ -83,14 +83,13 @@ const Login = ({ onLogin }) => {
                 const { isValid, errors } = validatePasswordStrength(newPassword);
                 if (!isValid) {
                     const errorMessages = Object.values(errors).filter(Boolean);
-                    setError(errorMessages.join(" ")); 
+                    setError(errorMessages.join(" "));
                     setIsLoading(false);
                     setTemporaryMessageClear(setError);
                     return;
                 }
 
                 const result = await resetPassword(email, newPassword, confirmPassword);
-                console.log("Reset password result:", result);
 
                 if (result.success) {
                     setSuccessMessage("Password redefined successfully.");
@@ -103,8 +102,15 @@ const Login = ({ onLogin }) => {
                     setTemporaryMessageClear(setError);
                 }
             } else {
+                const { isValid, errors } = validatePasswordStrength(password);
+                if (!isValid) {
+                    const errorMessages = Object.values(errors).filter(Boolean);
+                    setError(errorMessages.join(" "));
+                    setIsLoading(false);
+                    setTemporaryMessageClear(setError);
+                    return;
+                }
                 const result = await register(name, email, password);
-                console.log("Register result:", result);
 
                 if (result.success) {
                     setSuccessMessage(result.message);
@@ -120,7 +126,6 @@ const Login = ({ onLogin }) => {
             }
         } catch (error) {
             setError("Unespected error. Try again.");
-            console.log("Error:", error.message);
             setTemporaryMessageClear(setError);
         } finally {
             setIsLoading(false);
@@ -215,7 +220,7 @@ const Login = ({ onLogin }) => {
                         </>
                     )}
 
-                    {!isLoginMode ? (
+                    {!isLoginMode && !isResetPasswordMode ? (
                         <p className='mb-8 text-sm'>By signing up, you agree with our <span className='text-twitter-blue font-bold cursor-pointer hover:underline'>Terms of Use</span></p>
                     ) : (
                         <p className='mb-8 text-sm'>

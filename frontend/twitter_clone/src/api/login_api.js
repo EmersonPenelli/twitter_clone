@@ -3,7 +3,7 @@ import { API_BASE_URL } from "./base_api";
 
 export const login = async (email, password) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/token/`, { email, password });
+        const response = await axios.post(`${API_BASE_URL}/api/v1/token/`, { email, password });
         if (response.status === 200 && response.data.access && response.data.refresh) {
             return { success: true, data: response.data };
         } else {
@@ -17,7 +17,7 @@ export const login = async (email, password) => {
 
 export const register = async (name, email, password) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/auth/register/`, { name, email, password });
+        const response = await axios.post(`${API_BASE_URL}/api/v1/users/`, { name, email, password });
         if (response.status === 201) {
             return { success: true, message: "Registered successfully! Login." };
         } else {
@@ -31,7 +31,7 @@ export const register = async (name, email, password) => {
 
 export const resetPassword = async (email, newPassword, confirmPassword) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/auth/password-reset/`, { email, new_password: newPassword, confirm_password: confirmPassword });
+        const response = await axios.post(`${API_BASE_URL}/api/v1/password-reset/`, { email, new_password: newPassword, confirm_password: confirmPassword });
         return { success: true, message: "Password redefined successfully." };
     } catch (error) {
         console.error("Error redefining the password:", error);
@@ -40,7 +40,7 @@ export const resetPassword = async (email, newPassword, confirmPassword) => {
 };
 
 export const logout = async () => {
-    const refreshToken = localStorage.getItem('user_refresh_token'); 
+    const refreshToken = localStorage.getItem('user_refresh_token');
 
     console.log("Logout token:", refreshToken);
 
@@ -50,11 +50,11 @@ export const logout = async () => {
     }
 
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/auth/logout/`, {
-            refresh: refreshToken 
+        const response = await axios.post(`${API_BASE_URL}/api/va1/logout/`, {
+            refresh: refreshToken
         }, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('user_token')}`, 
+                'Authorization': `Bearer ${localStorage.getItem('user_token')}`,
             }
         });
 
@@ -71,13 +71,42 @@ export const logout = async () => {
 
 export const checkEmailExists = async (user_email) => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/api/auth/check-email/`, {
+        const response = await axios.get(`${API_BASE_URL}/api/v1/check-email/`, {
             params: { email: user_email }
         });
 
-        return { success: response.status === 200, exists: response.status === 200 }; 
+        return { success: response.status === 200, exists: response.status === 200 };
     } catch (error) {
         console.error("Error verifying the email:", error);
         return { success: false, message: error.response?.data?.message || "Error verifying the email." };
     }
 };
+
+export const updateUserPremiumStatus = async (userId) => {
+    try {
+        const response = await axios.patch(`${API_BASE_URL}/api/v1/users/${userId}`,
+            { is_premium: true }, 
+            {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('user_token')}`
+                }
+            }
+        );
+        return { success: true, data: response.data };
+    } catch (error) {
+        return { success: false, message: error.response?.data?.detail || "An error occurred" };
+    }
+};
+
+// export const fetchCurrentUser = async () => {
+//     try {
+//         const response = await axios.get(`${API_BASE_URL}/api/v1/users/`, {
+//             headers: {
+//                 'Authorization': `Bearer ${localStorage.getItem('user_token')}`
+//             }
+//         });
+//         return { success: true, data: response.data };
+//     } catch (error) {
+//         return { success: false, message: error.response?.data?.detail || "An error occurred" };
+//     }
+// };

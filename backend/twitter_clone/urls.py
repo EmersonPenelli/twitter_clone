@@ -7,7 +7,7 @@ from login.viewsets import UserViewSet
 from follows.viewsets import FollowViewSet
 from tweets.viewsets import TweetViewSet
 from notifications.viewsets import NotificationViewSet
-from .views import api_root
+
 
 # Definindo o router e registrando as views
 router = DefaultRouter()
@@ -19,9 +19,7 @@ router.register(r'notifications', NotificationViewSet)
 # Configuração das URLs
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", api_root, name="api-root"),
-    path("api/", include(router.urls)),  
-    path("api/auth/", include("login.urls")), 
-    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("api/v1/", include(router.urls)),  
+    path('api/v1/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
