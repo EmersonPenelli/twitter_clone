@@ -20,7 +20,9 @@ class UserViewSet(viewsets.ModelViewSet):
         users_data = []
         for user in queryset:
             serializer = self.get_serializer(user)
-            users_data.append(serializer.data)
+            user_data = serializer.data
+            user_data['is_following'] = Follow.objects.filter(follower=current_user, followed=user).exists()
+            users_data.append(user_data)
 
         return Response(users_data)
 
