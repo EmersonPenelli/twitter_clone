@@ -10,7 +10,7 @@ export const tweet = async (userId, content) => {
         
         console.log("Payload enviado:", payload); 
 
-        const response = await axios.post(`${API_BASE_URL}/api/tweets/`, payload);
+        const response = await axios.post(`${API_BASE_URL}/api/v1/tweets/`, payload);
         
         if (response.status === 201) { 
             return { success: true, data: response.data };
