@@ -42,7 +42,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if user != request.user:
             return Response({'detail': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
 
-        user.is_premium = True
+        user.is_premium = not user.is_premium
         user.save()
+        
         serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
