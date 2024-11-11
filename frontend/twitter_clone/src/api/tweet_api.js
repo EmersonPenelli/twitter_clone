@@ -10,7 +10,7 @@ export const tweet = async (userId, content) => {
         
         console.log("Payload enviado:", payload); 
 
-        const response = await axios.post(`${API_BASE_URL}/api/tweets/`, payload);
+        const response = await axios.post(`${API_BASE_URL}/api/v1/tweets/`, payload);
         
         if (response.status === 201) { 
             return { success: true, data: response.data };
@@ -42,7 +42,6 @@ export const fetchTweets = async () => {
 };
 
 export const updateState = async (tweetId, updateData) => {
-    console.log("Sending update:", { tweetId, updateData });
     try {
         const response = await axios.patch(`${API_BASE_URL}/api/v1/tweets/${tweetId}/`, updateData, {
             headers: {

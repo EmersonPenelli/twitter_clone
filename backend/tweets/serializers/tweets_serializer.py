@@ -9,7 +9,7 @@ class TweetSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Tweet
-        fields = ['id','name', 'user', 'content','likes_count', 'shares_count', 'comments_count', 'created_at', 'is_liked', 'is_shared']
+        fields = ['id', 'name', 'user', 'content', 'likes_count', 'shares_count', 'created_at', 'is_liked', 'is_shared']
 
     def get_is_liked(self, obj):
         request = self.context.get('request')

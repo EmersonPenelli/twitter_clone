@@ -7,13 +7,24 @@ import { fetchUsers, toggleFollowUser } from '../../api/follow';
 
 import TrendItem from '../TrendItem';
 import FollowItem from '../FollowItem';
-import { updateUserPremiumStatus } from '../../api/login_api';
+import { fetchUser, updateUserPremiumStatus } from '../../api/login_api'; // Adicione uma função para buscar o usuário
 
-const Aside = ({currentUser}) => {
+const Aside = ({ currentUser }) => {
     const [isSubscribed, setSubscribed] = useState(false);
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
+
+        const fetchPremiumStatus = async () => {
+            const userId = localStorage.getItem('user_id');
+            const response = await fetchUser(userId);
+            if (response.success) {
+                setSubscribed(response.data.is_premium);
+            } else {
+                console.error(response.message);
+            }
+        };
+
         const loadUsers = async () => {
             const response = await fetchUsers();
             if (response.success) {
@@ -26,15 +37,9 @@ const Aside = ({currentUser}) => {
             }
         };
 
-        const checkPremiumStatus = async () => {
-            if (currentUser) {
-                setSubscribed(currentUser.is_premium);
-            }
-        }
-
+        fetchPremiumStatus(); 
         loadUsers();
-        checkPremiumStatus();
-    }, []);
+    }, [currentUser]);
 
     const handleToggleFollow = async (userId) => {
         const response = await toggleFollowUser(userId);
@@ -48,14 +53,11 @@ const Aside = ({currentUser}) => {
     };
 
     const handleSubscribe = async () => {
-        if (!currentUser) {
-            alert("Você precisa estar logado para se inscrever no Premium.");
-            return; 
-        }
-        
-        const response = await updateUserPremiumStatus(currentUser.id); 
+        const userId = localStorage.getItem('user_id');
+
+        const response = await updateUserPremiumStatus(userId);
         if (response.success) {
-            setSubscribed(prev => !prev);
+            setSubscribed(response.data.is_premium);
         } else {
             console.error(response.message);
         }

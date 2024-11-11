@@ -8,7 +8,6 @@ class Tweet(models.Model):
     content = models.CharField(max_length=280)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    comments_count = models.PositiveIntegerField(default=0)  
     likes_count = models.PositiveIntegerField(default=0)       
     shares_count = models.PositiveIntegerField(default=0)        
 

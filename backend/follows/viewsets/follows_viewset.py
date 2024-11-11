@@ -1,13 +1,13 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from follows.models import Follow
 from follows.serializers import FollowSerializer
 
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all().order_by('-created_at')
     serializer_class = FollowSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         user_to_follow_id = request.data.get('user_id')
