@@ -15,9 +15,9 @@ export const login = async (email, password) => {
     }
 };
 
-export const register = async (name, email, password) => {
+export const register = async (name, email, password, confirmPassword) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/v1/users/`, { name, email, password });
+        const response = await axios.post(`${API_BASE_URL}/api/v1/users/`, { name, email, password, password_confirmation :confirmPassword });
         if (response.status === 201) {
             return { success: true, message: "Registered successfully! Login." };
         } else {

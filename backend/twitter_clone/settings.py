@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure--ugz-#nh+d2^b)w%1__l0aio%du4a!ydsuq4_uoy+jhi#w5b9j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['Analice.pythonanywhere.com', 'analice.pythonanywhere.com']
 
 
 # Application definition
@@ -58,7 +58,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
      'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ),
 }
 
@@ -115,7 +115,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "twitter_clone.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -145,7 +144,6 @@ DATABASES = {
 SITE_ID = 1
 
 AUTH_USER_MODEL = 'login.CustomUser'
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

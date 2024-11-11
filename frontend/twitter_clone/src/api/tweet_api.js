@@ -42,7 +42,6 @@ export const fetchTweets = async () => {
 };
 
 export const updateState = async (tweetId, updateData) => {
-    console.log("Sending update:", { tweetId, updateData });
     try {
         const response = await axios.patch(`${API_BASE_URL}/api/v1/tweets/${tweetId}/`, updateData, {
             headers: {

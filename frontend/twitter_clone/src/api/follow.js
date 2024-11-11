@@ -21,16 +21,16 @@ export const fetchUsers = async () => {
 
 export const toggleFollowUser = async (userId) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/v1/follows/`, { user_id: userId }, {
+        const response = await axios.post(`${API_BASE_URL}/api/v1/follows/`, { user_id: userId, }, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('user_token')}`
             }
         });
 
         if (response.status === 201) {
-            return { success: true, following: true }; // Seguido com sucesso
+            return { success: true, is_following: true }; 
         } else if (response.status === 204) {
-            return { success: true, following: false }; // Deixou de seguir com sucesso
+            return { success: true, is_following: false }; 
         } else {
             return { success: false, message: "Failed to toggle follow status." };
         }

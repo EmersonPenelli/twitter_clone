@@ -73,7 +73,7 @@ const Login = ({ onLogin }) => {
                     setTemporaryMessageClear(setError);
                 }
             } else if (isResetPasswordMode) {
-                if (newPassword != confirmPassword) {
+                if (newPassword !== confirmPassword) {
                     setError("Passwords do not match.");
                     setIsLoading(false);
                     setTemporaryMessageClear(setError);
@@ -110,13 +110,22 @@ const Login = ({ onLogin }) => {
                     setTemporaryMessageClear(setError);
                     return;
                 }
-                const result = await register(name, email, password);
+
+                if (password !== confirmPassword) {
+                    setError("Passwords do not match.");
+                    setIsLoading(false);
+                    setTemporaryMessageClear(setError);
+                    return;
+                }
+
+                const result = await register(name, email, password, confirmPassword);
 
                 if (result.success) {
                     setSuccessMessage(result.message);
+                    setName('');
                     setEmail('');
                     setPassword('');
-                    setName('');
+                    setConfirmPassword('');
                     setIsLoginMode(true);
                     setTemporaryMessageClear(setSuccessMessage);
                 } else {
@@ -125,12 +134,13 @@ const Login = ({ onLogin }) => {
                 }
             }
         } catch (error) {
-            setError("Unespected error. Try again.");
+            setError("Unexpected error. Try again.");
             setTemporaryMessageClear(setError);
         } finally {
             setIsLoading(false);
         }
     };
+
 
     const handleResetPassword = () => {
         setIsResetPasswordMode(true);
@@ -171,6 +181,7 @@ const Login = ({ onLogin }) => {
                                         required
                                     />
                                 </div>
+
                             )}
                             <div className="mb-4">
                                 <input
@@ -192,6 +203,18 @@ const Login = ({ onLogin }) => {
                                     required
                                 />
                             </div>
+                            {!isLoginMode && (
+                                <div className="mb-4">
+                                    <input
+                                        type="confirmPassword"
+                                        placeholder="Confirm Your Password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className="w-full bg-gray-700 text-white rounded py-2 px-4"
+                                        required
+                                    />
+                                </div>
+                            )}
                         </>
                     )}
 
@@ -225,7 +248,17 @@ const Login = ({ onLogin }) => {
                     ) : (
                         <p className='mb-8 text-sm'>
                             {isResetPasswordMode ? "Remembered your password? " : "Forgot your password? "}
-                            <span className='text-twitter-blue font-bold cursor-pointer hover:underline' onClick={handleResetPassword}>
+                            <span
+                                className='text-twitter-blue font-bold cursor-pointer hover:underline'
+                                onClick={() => {
+                                    if (isResetPasswordMode) {
+                                        setIsLoginMode(true);
+                                        setIsResetPasswordMode(false);
+                                    } else {
+                                        handleResetPassword();
+                                    }
+                                }}
+                            >
                                 {isResetPasswordMode ? "Back to Login" : "Click here"}
                             </span>
                         </p>

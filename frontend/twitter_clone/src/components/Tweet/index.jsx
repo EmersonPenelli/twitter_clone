@@ -37,8 +37,14 @@ const Tweet = ({ tweet }) => {
                     return;
             }
     
+            // Update the database with new state
             if (Object.keys(updateData).length > 0) {
                 const updatedTweet = await updateState(tweet.id, updateData);
+
+                setIsLiked(updatedTweet.is_liked);
+                setIsShared(updatedTweet.is_shared); 
+
+                console.log(updatedTweet);
             }
         } catch (error) {
             console.error("Error updating tweet interaction:", error);
