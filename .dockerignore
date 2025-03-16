@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Ignorar arquivos de ambiente
 .env
 .env.dev
@@ -23,3 +24,14 @@ test/
 # Ignorar diretórios do sistema de controle de versão
 .git/
 .gitignore
+=======
+.git
+.gitignore
+__pycache__
+*.py[co]
+*.sqlite3
+.env*
+venv/
+dist/
+build/
+>>>>>>> feeca8b (Projeto finalizado)
